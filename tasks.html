@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Tasks | Quiz Maker Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
+        }
+
+        body {
+            background: #f0f7ff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #1e3c72;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #2c7da0;
+        }
+
+        .login-area {
+            position: relative;
+        }
+
+        .login-button {
+            background: #eef2ff;
+            padding: 0.4rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.9rem;
+            color: #1e3c72;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .login-button:hover {
+            background: #e0e8ff;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 0.5rem 0;
+            min-width: 120px;
+            display: none;
+            z-index: 10;
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            color: #1e3c72;
+            transition: background 0.2s;
+        }
+
+        .dropdown-menu a:hover {
+            background: #f0f4fa;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.2);
+        }
+
+        .modal-content h3 {
+            margin-bottom: 1rem;
+            color: #1e3c72;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            margin-bottom: 1rem;
+            border: 1.5px solid #dfe7ef;
+            border-radius: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .modal-content button {
+            width: 100%;
+            background: #2c7da0;
+            color: white;
+            border: none;
+            padding: 0.6rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .modal-content button:hover {
+            background: #1f5e7a;
+        }
+
+        .close-modal {
+            margin-top: 1rem;
+            background: none;
+            color: #5b6e8c;
+            border: 1px solid #cbd5e1;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            flex: 1;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 2rem;
+            color: #1e3c72;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero p {
+            color: #5b6e8c;
+            font-size: 1rem;
+        }
+
+        /* Tasks specific styling */
+        .tasks-list {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        }
+
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #e2edf7;
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-title {
+            font-weight: 600;
+            color: #1e3c72;
+        }
+
+        .task-status {
+            font-size: 0.85rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 1rem;
+            background: #eef2ff;
+            color: #2c7da0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: #8ba0bc;
+            border-top: 1px solid #e2edf7;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 700px) {
+            .top-bar {
+                flex-direction: column;
+                text-align: center;
+            }
+            .nav-links {
+                justify-content: center;
+            }
+            .hero h1 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="tasks.html">Tasks</a>
+            <a href="resources.html">Resources</a>
+        </div>
+        <div class="login-area" id="loginArea">
+            <div class="login-button" id="loginButton">Loading...</div>
+            <div class="dropdown-menu" id="dropdownMenu">
+                <a href="#" id="logoutLink">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <h3>Login</h3>
+            <input type="text" id="usernameInput" placeholder="Username">
+            <input type="password" id="passwordInput" placeholder="Password">
+            <button id="loginSubmit">Login</button>
+            <button class="close-modal" id="closeModalBtn">Cancel</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="hero">
+            <h1>📋 My Tasks</h1>
+            <p>Stay organized – upcoming exams, question creation, and more.</p>
+        </div>
+
+        <div class="tasks-list">
+            <div class="task-item">
+                <span class="task-title">📖 DSE Online Judge – Complete 5 practice sets</span>
+                <span class="task-status">Due: Apr 10, 2025</span>
+            </div>
+            <div class="task-item">
+                <span class="task-title">✏️ Question Creator – Add 20 new MC questions</span>
+                <span class="task-status">Due: Apr 15, 2025</span>
+            </div>
+            <div class="task-item">
+                <span class="task-title">📂 Past Papers – Organise 2024 papers</span>
+                <span class="task-status">Due: Apr 20, 2025</span>
+            </div>
+            <div class="task-item">
+                <span class="task-title">🎯 Subject Navigator – Update subject links</span>
+                <span class="task-status">Due: Apr 25, 2025</span>
+            </div>
+            <div class="task-item">
+                <span class="task-title">📅 Exam Countdown – Add remaining exam dates</span>
+                <span class="task-status">Due: Apr 30, 2025</span>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        
+    </footer>
+<script src="account.js"></script>
+    <script>
+        requireAuth();  // Immediately check and redirect if not logged in
+    </script>
+    <script src="account.js"></script>
+    <script>
+        // Same login logic as home page
+        const loginButton = document.getElementById('loginButton');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        const loginModal = document.getElementById('loginModal');
+        const usernameInput = document.getElementById('usernameInput');
+        const passwordInput = document.getElementById('passwordInput');
+        const loginSubmit = document.getElementById('loginSubmit');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const logoutLink = document.getElementById('logoutLink');
+
+        function updateUI() {
+            if (currentUser) {
+                loginButton.textContent = `👤 ${currentUser.username}`;
+                dropdownMenu.style.display = 'none';
+            } else {
+                loginButton.textContent = `🔒 Login`;
+                dropdownMenu.style.display = 'none';
+            }
+        }
+
+        loginButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (currentUser) {
+                dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+            } else {
+                loginModal.style.display = 'flex';
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!document.getElementById('loginArea').contains(e.target)) {
+                dropdownMenu.style.display = 'none';
+            }
+        });
+
+        loginSubmit.addEventListener('click', () => {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            const user = authenticate(username, password);
+            if (user) {
+                saveCurrentUser(user);
+                updateUI();
+                loginModal.style.display = 'none';
+                usernameInput.value = '';
+                passwordInput.value = '';
+            } else {
+                alert('Invalid username or password');
+            }
+        });
+
+        function closeModal() {
+            loginModal.style.display = 'none';
+        }
+        closeModalBtn.addEventListener('click', closeModal);
+        window.addEventListener('click', (e) => {
+            if (e.target === loginModal) closeModal();
+        });
+
+        logoutLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            saveCurrentUser(null);
+            updateUI();
+            dropdownMenu.style.display = 'none';
+        });
+
+        updateUI();
+    </script>
+</body>
+</html>
