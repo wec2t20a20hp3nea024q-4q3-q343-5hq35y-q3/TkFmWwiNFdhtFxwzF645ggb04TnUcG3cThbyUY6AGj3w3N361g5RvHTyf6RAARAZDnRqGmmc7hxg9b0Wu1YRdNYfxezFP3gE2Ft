@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>DSE Online Judge v0.0.alpha</title>
+    <title>DSE Online Judge | Quiz Maker Hub</title>
     <link rel="stylesheet" href="styles.css">
     <!-- KaTeX CSS and JS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
@@ -69,6 +69,10 @@
                     <option value="LQ">LQ</option>
                 </select>
             </div>
+            <div class="filter-group" style="flex: 2; min-width: 200px;">
+                <label>Search</label>
+                <input type="text" id="searchInput" placeholder="Search in questions and options..." style="width: 100%;">
+            </div>
         </div>
 
         <div class="stats-bar">
@@ -89,10 +93,6 @@
     </footer>
 
     <script src="../account.js"></script>
-    <script>
-        requireAuth();
-          // Immediately check and redirect if not logged in
-    </script>
     <script src="./database.js"></script>
     <script src="script.js"></script>
     <script>
