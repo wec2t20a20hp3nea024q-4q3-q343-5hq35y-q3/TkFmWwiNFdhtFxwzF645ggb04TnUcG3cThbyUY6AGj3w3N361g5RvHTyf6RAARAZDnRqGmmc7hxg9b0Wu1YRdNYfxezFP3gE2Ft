@@ -59,6 +59,7 @@
             background: #e0e8ff;
         }
 
+        /* Dropdown menu */
         .dropdown-menu {
             position: absolute;
             top: 100%;
@@ -84,7 +85,7 @@
             background: #f0f4fa;
         }
 
-        /* Login Modal */
+        /* Modal overlay */
         .modal {
             display: none;
             position: fixed;
@@ -144,7 +145,7 @@
             border: 1px solid #cbd5e1;
         }
 
-        /* Main Content */
+        /* Main content (same as before) */
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -152,276 +153,58 @@
             flex: 1;
         }
 
-        /* Header section */
-        .quiz-header {
+        .hero {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
         }
 
-        .quiz-header h1 {
-            font-size: 2rem;
+        .hero h1 {
+            font-size: 2.5rem;
             color: #1e3c72;
             margin-bottom: 0.5rem;
         }
 
-        .quiz-header p {
+        .hero p {
             color: #5b6e8c;
+            font-size: 1.1rem;
         }
 
-        /* Filter bar */
-        .filter-bar {
-            background: white;
-            border-radius: 1.5rem;
-            padding: 1rem 1.5rem;
-            margin-bottom: 2rem;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            align-items: flex-end;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
         }
 
-        .filter-group {
-            flex: 1;
-            min-width: 160px;
-        }
-
-        .filter-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 0.3rem;
-            color: #2c3e66;
-            font-size: 0.85rem;
-        }
-
-        .filter-group select {
-            width: 100%;
-            padding: 0.6rem 0.8rem;
-            border: 1.5px solid #dfe7ef;
-            border-radius: 1rem;
-            background: white;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .filter-group select:focus {
-            outline: none;
-            border-color: #2c7da0;
-        }
-
-        .stats-bar {
-            background: white;
-            border-radius: 1.5rem;
-            padding: 1rem 1.5rem;
-            margin-bottom: 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .score-area {
-            background: #1e3c72;
-            padding: 0.4rem 1.2rem;
-            border-radius: 2rem;
-            color: white;
-            font-weight: 600;
-        }
-
-        .score-area span {
-            font-size: 1.3rem;
-            font-weight: 800;
-            margin: 0 2px;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 1rem;
-        }
-
-        button {
-            border: none;
-            background: white;
-            padding: 0.5rem 1.2rem;
-            border-radius: 2rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-
-        .btn-submit {
-            background: #2ca02e;
-            color: white;
-        }
-        .btn-submit:hover {
-            background: #3ad67e;
-            transform: translateY(-2px);
-        }
-        .btn-reset {
-            background: #f5a925;
-            border: 1px solid #cbd5e1;
-        }
-        .btn-reset:hover {
-            background: #d63636;
-        }
-
-        /* Questions area */
-        .questions-area {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .question-card {
+        .card {
             background: white;
             border-radius: 1.5rem;
             padding: 1.5rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            border: 1px solid #e6edf4;
-            transition: box-shadow 0.2s;
-        }
-
-        .question-card:hover {
             box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
         }
 
-        .question-title-row {
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            flex-wrap: wrap;
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.1);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
             margin-bottom: 1rem;
         }
 
-        .check-btn {
-            background: #2e7d32;
-            color: white;
-            border: none;
-            padding: 6px 14px;
-            border-radius: 2rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .check-btn:hover {
-            background: #1b5e20;
-            transform: scale(0.97);
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #1e3c72;
         }
 
-        .q-type-badge {
-            font-size: 0.7rem;
-            font-weight: 600;
-            padding: 0.2rem 0.9rem;
-            border-radius: 2rem;
-            background: #e9ecef;
-            color: #2c3e66;
-        }
-        .q-type-badge.choice { background: #d9eff7; color: #0c6b8c; }
-        .q-type-badge.long { background: #fef2e0; color: #b45f06; }
-
-        .question-text {
-            font-size: 1rem;
-            font-weight: 550;
-            line-height: 1.4;
-            color: #0a2540;
-            flex: 1;
-            min-width: 0;          /* allows flex child to shrink below content size */
-            word-wrap: break-word;
-            white-space: normal;
-        }
-
-        .points-badge {
-            font-size: 0.7rem;
-            background: #f1f5f9;
-            padding: 0.2rem 0.7rem;
-            border-radius: 2rem;
-            color: #2c5282;
-        }
-
-        /* Options area */
-        .options-area {
-            margin: 1rem 0 0.8rem 0;
-            padding-left: 0;
-        }
-        .option-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        .option-item input[type="radio"] {
-            width: 18px;
-            height: 18px;
-            accent-color: #2c7da0;
-            cursor: pointer;
-        }
-        .option-item label {
-            font-size: 0.95rem;
-            color: #1e2f44;
-            cursor: pointer;
-            flex: 1;
-        }
-
-        .answer-input input, .answer-input textarea {
-            width: 100%;
-            padding: 12px 16px;
-            border-radius: 1rem;
-            border: 1.5px solid #dfe7ef;
-            font-size: 0.95rem;
-            background: #fefefe;
-        }
-        .answer-input input:focus, .answer-input textarea:focus {
-            outline: none;
-            border-color: #2c7da0;
-        }
-        textarea {
-            resize: vertical;
-            min-height: 90px;
-        }
-
-        .feedback {
-            margin-top: 1rem;
-            padding: 0.8rem 1rem;
-            border-radius: 1rem;
-            background: #f9fafc;
-            font-size: 0.85rem;
-            border-left: 4px solid #94a3b8;
-        }
-        .feedback.correct {
-            background: #e6f9ed;
-            border-left-color: #2b9348;
-            color: #145c2e;
-        }
-        .feedback.wrong {
-            background: #ffeae9;
-            border-left-color: #dc2626;
-            color: #9b1c1c;
-        }
-        .feedback.info {
-            background: #ecfdf5;
-            border-left-color: #0e7c5c;
-        }
-        .lq-buttons {
-            margin-top: 0.5rem;
-            display: flex;
-            gap: 0.5rem;
-        }
-        .lq-btn {
-            background: #eef2ff;
-            border: none;
-            padding: 4px 12px;
-            border-radius: 2rem;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-        .lq-btn.correct {
-            background: #c8e6c9;
-        }
-        .lq-btn.wrong {
-            background: #ffcdd2;
+        .card p {
+            color: #5b6e8c;
+            line-height: 1.5;
         }
 
         footer {
@@ -431,56 +214,7 @@
             border-top: 1px solid #e2edf7;
             margin-top: 2rem;
         }
-        /* Back to Top Button */
-        .back-to-top {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
-            background: #2c7da0;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            font-size: 24px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-            opacity: 0;
-            visibility: hidden;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
 
-        .back-to-top:hover {
-            background: #1f5e7a;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.25);
-        }
-
-        .back-to-top.show {
-            opacity: 1;
-            visibility: visible;
-        }
-        .question-text img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 10px 0;
-            border-radius: 8px;
-        }
-        @media (max-width: 700px) {
-            .back-to-top {
-                bottom: 20px;
-                right: 20px;
-                width: 45px;
-                height: 45px;
-                font-size: 20px;
-            }
-        }
         @media (max-width: 700px) {
             .top-bar {
                 flex-direction: column;
@@ -489,15 +223,7 @@
             .nav-links {
                 justify-content: center;
             }
-            .filter-bar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .stats-bar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .btn-group {
-                justify-content: center;
+            .hero h1 {
+                font-size: 2rem;
             }
         }
