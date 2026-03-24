@@ -3,280 +3,261 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>ICT Past Papers 0.0.2.beta</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    <title>ICT Past Papers | Quiz Maker Hub</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="top-bar">
+        <div class="nav-links">
+            <a href="../index.html">Home</a>
+            <a href="tasks.html">Tasks</a>
+            <a href="resources.html">Resources</a>
+        </div>
+        <div class="login-area" id="loginArea">
+            <div class="login-button" id="loginButton">Loading...</div>
+            <div class="dropdown-menu" id="dropdownMenu">
+                <a href="#" id="logoutLink">Logout</a>
+            </div>
+        </div>
+    </div>
 
-        body {
-            font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
-            background: #f0f7ff;
-            padding: 2rem 1rem;
-        }
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <h3>Login</h3>
+            <input type="text" id="usernameInput" placeholder="Username">
+            <input type="password" id="passwordInput" placeholder="Password">
+            <button id="loginSubmit">Login</button>
+            <button class="close-modal" id="closeModalBtn">Cancel</button>
+        </div>
+    </div>
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+    <div class="container">
+        <h1>📂 ICT Past Papers</h1>
+        <div class="sub">Click any section title to rename. Use the "+ Add Paper" button to add new PDFs.</div>
 
-        h1 {
-            text-align: center;
-            color: #1e3c72;
-            margin-bottom: 0.5rem;
-        }
+        <div id="sectionsContainer" class="sections-grid">
+            <!-- Example sections -->
+            <div class="section-card" data-section="databases">
+                <div class="section-header" contenteditable="true">Databases</div>
+                <div class="papers-list">
+                    <div class="year-item">
+                        <a href="./Databases/2017.pdf" target="_blank">
+                            <span class="pdf-icon">📄</span> 2017
+                        </a>
+                    </div>
+                    <div class="year-item">
+                        <a href="./Databases/2018.pdf" target="_blank">
+                            <span class="pdf-icon">📄</span> 2018
+                        </a>
+                    </div>
+                    <div class="year-item">
+                        <a href="./Databases/2019.pdf" target="_blank">
+                            <span class="pdf-icon">📄</span> 2019
+                        </a>
+                    </div>
+                </div>
+                <div class="add-paper">
+                    <button class="add-paper-btn">+ Add Paper</button>
+                </div>
+            </div>
 
-        .sub {
-            text-align: center;
-            color: #5b6e8c;
-            margin-bottom: 2rem;
-        }
+            <div class="section-card" data-section="communication">
+                <div class="section-header" contenteditable="true">Communication</div>
+                <div class="papers-list">
+                    <div class="year-item">
+                        <a href="./Communication/2017.pdf" target="_blank">
+                            <span class="pdf-icon">📄</span> 2017
+                        </a>
+                    </div>
+                    <div class="year-item">
+                        <a href="./Communication/2018.pdf" target="_blank">
+                            <span class="pdf-icon">📄</span> 2018
+                        </a>
+                    </div>
+                </div>
+                <div class="add-paper">
+                    <button class="add-paper-btn">+ Add Paper</button>
+                </div>
+            </div>
+        </div>
 
-        /* Sections grid – similar to three‑column layout but now sections are columns */
-        .sections-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
+        <button class="add-section-btn" id="addSectionBtn">+ Add Section</button>
+    </div>
 
-        .section-card {
-            background: white;
-            border-radius: 1.5rem;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
+    <footer>💡 Tip: Click any section title to edit it. Use the “+ Add Paper” button to add new PDF links inside a section.</footer>
 
-        .section-header {
-            background: #1e3c72;
-            color: white;
-            padding: 1rem;
-            text-align: center;
-            font-size: 1.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .section-header:hover {
-            background: #2a5298;
-        }
-        .section-header[contenteditable="true"] {
-            background: #2c7da0;
-            outline: none;
-        }
-        .section-header[contenteditable="true"]:focus {
-            background: #1f5e7a;
-        }
+    <!-- Back to Top Button -->
+    <button id="backToTopBtn" class="back-to-top" title="Back to Top">↑</button>
 
-        .papers-list {
-            padding: 1rem;
-            flex: 1;
-        }
+    <script src="../../account.js"></script>
+    <script>
+        // ====================== Login logic (same as home page) ======================
+        const loginButton = document.getElementById('loginButton');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        const loginModal = document.getElementById('loginModal');
+        const usernameInput = document.getElementById('usernameInput');
+        const passwordInput = document.getElementById('passwordInput');
+        const loginSubmit = document.getElementById('loginSubmit');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const logoutLink = document.getElementById('logoutLink');
 
-        .year-item {
-            margin-bottom: 0.8rem;
-            border-bottom: 1px solid #e2edf7;
-            padding-bottom: 0.5rem;
-        }
-
-        .year-item a {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            color: #2c3e66;
-            transition: color 0.2s;
-            font-size: 1rem;
-        }
-
-        .year-item a:hover {
-            color: #2c7da0;
-            text-decoration: underline;
-        }
-
-        .pdf-icon {
-            font-size: 1.2rem;
-        }
-
-        .add-paper {
-            margin-top: 1rem;
-            text-align: center;
-            padding-top: 0.5rem;
-            border-top: 1px dashed #cbd5e1;
-        }
-
-        .add-paper button {
-            background: none;
-            border: none;
-            color: #2c7da0;
-            cursor: pointer;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 0.3rem 0.8rem;
-            border-radius: 2rem;
-            transition: background 0.2s;
-        }
-        .add-paper button:hover {
-            background: #eef2ff;
-        }
-
-        .add-section-btn {
-            display: block;
-            margin: 2rem auto 0;
-            background: #2c7da0;
-            color: white;
-            border: none;
-            padding: 0.7rem 1.5rem;
-            border-radius: 2rem;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .add-section-btn:hover {
-            background: #1f5e7a;
-            transform: translateY(-2px);
-        }
-
-        @media (max-width: 700px) {
-            .sections-grid {
-                grid-template-columns: 1fr;
+        function updateLoginUI() {
+            if (typeof currentUser !== 'undefined' && currentUser) {
+                loginButton.textContent = `👤 ${currentUser.username}`;
+                dropdownMenu.style.display = 'none';
+            } else {
+                loginButton.textContent = `🔒 Login`;
+                dropdownMenu.style.display = 'none';
             }
         }
 
-        footer {
-            text-align: center;
-            margin-top: 2rem;
-            color: #8ba0bc;
-            font-size: 0.8rem;
+        loginButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (typeof currentUser !== 'undefined' && currentUser) {
+                dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+            } else {
+                loginModal.style.display = 'flex';
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!document.getElementById('loginArea').contains(e.target)) {
+                dropdownMenu.style.display = 'none';
+            }
+        });
+
+        loginSubmit.addEventListener('click', () => {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            if (typeof authenticate !== 'undefined') {
+                const user = authenticate(username, password);
+                if (user) {
+                    if (typeof saveCurrentUser !== 'undefined') saveCurrentUser(user);
+                    updateLoginUI();
+                    loginModal.style.display = 'none';
+                    usernameInput.value = '';
+                    passwordInput.value = '';
+                } else {
+                    alert('Invalid username or password');
+                }
+            } else {
+                alert('Authentication not available. Please check account.js.');
+            }
+        });
+
+        function closeModal() {
+            loginModal.style.display = 'none';
         }
-    </style>
-</head>
-<body>
-<div class="container">
-    <h1>ICT Past Papers</h1>
-    <div class="sub">Click any section title to rename. Use the "+ Add Paper" button to add new PDFs.</div>
+        closeModalBtn.addEventListener('click', closeModal);
+        window.addEventListener('click', (e) => {
+            if (e.target === loginModal) closeModal();
+        });
 
-    <div id="sectionsContainer" class="sections-grid">
-        <!-- Example sections (you can add more later) -->
-        <div class="section-card" data-section="databases">
-            <div class="section-header" contenteditable="true">Databases</div>
-            <div class="papers-list">
-                <div class="year-item">
-                    <a href="./Databases/2017.pdf" target="_blank">
-                        <span class="pdf-icon">📄</span> 2017
-                    </a>
+        logoutLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (typeof saveCurrentUser !== 'undefined') saveCurrentUser(null);
+            updateLoginUI();
+            dropdownMenu.style.display = 'none';
+        });
+
+        updateLoginUI();
+
+        // ====================== Past Papers logic ======================
+        function addNewSection() {
+            const sectionsContainer = document.getElementById('sectionsContainer');
+            const newSection = document.createElement('div');
+            newSection.className = 'section-card';
+            newSection.setAttribute('data-section', 'new-section-' + Date.now());
+            newSection.innerHTML = `
+                <div class="section-header" contenteditable="true">New Section</div>
+                <div class="papers-list"></div>
+                <div class="add-paper">
+                    <button class="add-paper-btn">+ Add Paper</button>
                 </div>
-                <div class="year-item">
-                    <a href="./Databases/2018.pdf" target="_blank">
-                        <span class="pdf-icon">📄</span> 2018
-                    </a>
-                </div>
-                <div class="year-item">
-                    <a href="./Databases/2019.pdf" target="_blank">
-                        <span class="pdf-icon">📄</span> 2019
-                    </a>
-                </div>
-            </div>
-            <div class="add-paper">
-                <button class="add-paper-btn">+ Add Paper</button>
-            </div>
-        </div>
-
-        <div class="section-card" data-section="communication">
-            <div class="section-header" contenteditable="true">Communication</div>
-            <div class="papers-list">
-                <div class="year-item">
-                    <a href="./Communication/2017.pdf" target="_blank">
-                        <span class="pdf-icon">📄</span> 2017
-                    </a>
-                </div>
-                <div class="year-item">
-                    <a href="./Communication/2018.pdf" target="_blank">
-                        <span class="pdf-icon">📄</span> 2018
-                    </a>
-                </div>
-            </div>
-            <div class="add-paper">
-                <button class="add-paper-btn">+ Add Paper</button>
-            </div>
-        </div>
-
-        <!-- You can add more sections here manually, or use the button below -->
-    </div>
-
-    <button class="add-section-btn" id="addSectionBtn">+ Add Section</button>
-
-    <footer>Tip: Click any section title to edit it. Use the “+ Add Paper” button to add new PDF links inside a section.</footer>
-</div>
-
-<script>
-    // Function to add a new section (card)
-    function addNewSection() {
-        const sectionsContainer = document.getElementById('sectionsContainer');
-        const newSection = document.createElement('div');
-        newSection.className = 'section-card';
-        // Generate a random data attribute (optional)
-        newSection.setAttribute('data-section', 'new-section-' + Date.now());
-        newSection.innerHTML = `
-            <div class="section-header" contenteditable="true">New Section</div>
-            <div class="papers-list"></div>
-            <div class="add-paper">
-                <button class="add-paper-btn">+ Add Paper</button>
-            </div>
-        `;
-        sectionsContainer.appendChild(newSection);
-        attachAddPaperListener(newSection);
-    }
-
-    // Function to attach the "+ Add Paper" button listener for a given section card
-    function attachAddPaperListener(sectionCard) {
-        const addBtn = sectionCard.querySelector('.add-paper-btn');
-        if (!addBtn) return;
-        addBtn.addEventListener('click', function(e) {
-            const papersList = sectionCard.querySelector('.papers-list');
-            const year = prompt('Enter the year (e.g., 2020):');
-            if (!year) return;
-            // Build file path: section name (folder) / year.pdf
-            // We'll get the section name from the header (may be editable)
-            let sectionHeader = sectionCard.querySelector('.section-header');
-            let sectionName = sectionHeader.textContent.trim();
-            // Convert to folder name (lowercase, spaces replaced)
-            let folderName = sectionName.replace(/\s+/g, '-');
-            // Construct file path
-            let filePath = `./${folderName}/${year}.pdf`;
-            const newItem = document.createElement('div');
-            newItem.className = 'year-item';
-            newItem.innerHTML = `
-                <a href="${escapeHtml(filePath)}" target="_blank">
-                    <span class="pdf-icon">📄</span> ${escapeHtml(year)}
-                </a>
             `;
-            papersList.appendChild(newItem);
+            sectionsContainer.appendChild(newSection);
+            attachAddPaperListener(newSection);
+        }
+
+        function attachAddPaperListener(sectionCard) {
+            const addBtn = sectionCard.querySelector('.add-paper-btn');
+            if (!addBtn) return;
+            addBtn.addEventListener('click', function(e) {
+                const papersList = sectionCard.querySelector('.papers-list');
+                const year = prompt('Enter the year (e.g., 2020):');
+                if (!year) return;
+                let sectionHeader = sectionCard.querySelector('.section-header');
+                let sectionName = sectionHeader.textContent.trim();
+                let folderName = sectionName.replace(/\s+/g, '-');
+                let filePath = `./${folderName}/${year}.pdf`;
+                const newItem = document.createElement('div');
+                newItem.className = 'year-item';
+                newItem.innerHTML = `
+                    <a href="${escapeHtml(filePath)}" target="_blank">
+                        <span class="pdf-icon">📄</span> ${escapeHtml(year)}
+                    </a>
+                `;
+                papersList.appendChild(newItem);
+            });
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        // Attach listeners to existing sections
+        document.querySelectorAll('.section-card').forEach(card => {
+            attachAddPaperListener(card);
         });
-    }
 
-    function escapeHtml(str) {
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
+        // Add section button
+        document.getElementById('addSectionBtn').addEventListener('click', addNewSection);
+
+        // Back to Top Button
+        const backToTopBtn = document.getElementById('backToTopBtn');
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 300) {
+                backToTopBtn.classList.add('show');
+            } else {
+                backToTopBtn.classList.remove('show');
+            }
         });
-    }
+        backToTopBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        (function() {
+        // Create overlay element
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.backgroundColor = '#2c7da0';   // your blueish-green color
+        overlay.style.zIndex = '9999';
+        overlay.style.pointerEvents = 'none';
+        overlay.style.clipPath = 'circle(150% at center)';
+        overlay.style.transition = 'clip-path 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+        document.body.appendChild(overlay);
 
-    // Attach listeners to all existing sections
-    document.querySelectorAll('.section-card').forEach(card => {
-        attachAddPaperListener(card);
-    });
+        // Force reflow
+        overlay.offsetHeight;
 
-    // Add section button
-    document.getElementById('addSectionBtn').addEventListener('click', addNewSection);
-</script>
+        // Start shrink animation
+        overlay.style.clipPath = 'circle(0% at center)';
+
+        // Remove overlay after animation finishes
+        overlay.addEventListener('transitionend', () => {
+            overlay.remove();
+        });
+    })();
+    </script>
 </body>
 </html>
