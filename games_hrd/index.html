@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>game#1</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-card">
+            <div class="header">
+                <h1>滑动华容道</h1>
+                <p class="subtitle"></p>
+            </div>
+
+            <div class="toolbar">
+                <div class="size-control">
+                    <label>Grid size</label>
+                    <input type="number" id="gridSize" min="2" max="8" value="4" step="1">
+                </div>
+                <button id="randomBtn" class="btn primary">Reset</button>
+                <button id="resetBtn" class="btn secondary">Sort</button>
+                <div class="step-box">
+                    <span>Steps</span>
+                    <strong id="stepCount">0</strong>
+                </div>
+            </div>
+
+            <!-- 拼图网格区域 -->
+            <div id="puzzleGrid" class="puzzle-grid"></div>
+
+            <div id="victoryToast" class="victory-toast hidden">Victory!</div>
+            <div class="hint"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
