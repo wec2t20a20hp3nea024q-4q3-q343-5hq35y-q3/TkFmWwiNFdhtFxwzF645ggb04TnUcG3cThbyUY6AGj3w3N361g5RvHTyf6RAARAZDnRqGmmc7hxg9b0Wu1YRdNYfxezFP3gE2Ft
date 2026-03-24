@@ -46,9 +46,12 @@ function searchQuestions(question, searchTerm) {
     });
 })();
 // Global variables
-let currentQuestions = [];
-let currentQuestionItems = [];
-let showExplanations = true; // global toggle state
+let currentQuestions = [];        // Full filtered list
+let currentQuestionItems = [];    // All rendered items (persists across loads)
+let renderedCount = 0;            // Number of questions currently rendered
+const BATCH_SIZE = 10;            // Load 10 questions at a time
+let showExplanations = true;      // global toggle state
+let loadingMore = false;          // Prevent multiple simultaneous loads
 
 // DOM elements
 const subjectSelect = document.getElementById('subjectFilter');
@@ -59,6 +62,9 @@ const questionsContainer = document.getElementById('questionsContainer');
 const totalScoreSpan = document.getElementById('totalScoreDisplay');
 const maxScoreSpan = document.getElementById('maxScoreDisplay');
 const resetBtn = document.getElementById('resetBtn');
+const loadMoreContainer = document.getElementById('loadMoreContainer');
+const questionCountDisplay = document.getElementById('questionCountDisplay');
+const totalQuestionCountDisplay = document.getElementById('totalQuestionCountDisplay');
 
 // Populate subject dropdown
 function populateSubjects() {
@@ -123,7 +129,7 @@ function updateSubtopics() {
     loadQuestions();
 }
 
-// Load questions based on current filters
+// Load questions based on current filters (full list)
 function loadQuestions() {
     const subject = subjectSelect.value;
     const topic = topicSelect.value;
@@ -145,46 +151,30 @@ function loadQuestions() {
     }
 
     currentQuestions = filtered;
-    renderQuestions();
-}
-
-// Render math with KaTeX after DOM updates
-function renderMath() {
-    if (typeof renderMathInElement === 'function') {
-        renderMathInElement(document.body, {
-            delimiters: [
-                {left: '$$', right: '$$', display: true},
-                {left: '$', right: '$', display: false}
-            ],
-            throwOnError: false
-        });
-    } else {
-        // Wait 100ms and try again (library not loaded yet)
-        setTimeout(renderMath, 100);
-    }
-}
-
-// Toggle explanation visibility without re-rendering
-function toggleExplanationsVisibility() {
-    const explanationSpans = document.querySelectorAll('.explanation-text');
-    explanationSpans.forEach(span => {
-        span.style.display = showExplanations ? '' : 'none';
-    });
-}
-
-// Render questions
-function renderQuestions() {
-    questionsContainer.innerHTML = '';
+    // Reset rendering state
+    renderedCount = 0;
     currentQuestionItems = [];
+    questionsContainer.innerHTML = '';
+    loadMoreContainer.innerHTML = '';
+    // Update total count display
+    totalQuestionCountDisplay.textContent = currentQuestions.length;
+    // Load first batch
+    loadMore();
+    updateScoreSummary();
+}
 
-    if (currentQuestions.length === 0) {
-        questionsContainer.innerHTML = '<div style="text-align:center; padding:3rem;">📭 No questions match your selection.</div>';
-        updateScoreSummary();
-        renderMath();
-        return;
-    }
+// Update question count display
+function updateQuestionCount() {
+    questionCountDisplay.textContent = renderedCount;
+}
 
-    for (let idx = 0; idx < currentQuestions.length; idx++) {
+// Render a batch of questions (starting from renderedCount)
+function renderBatch() {
+    const start = renderedCount;
+    const end = Math.min(start + BATCH_SIZE, currentQuestions.length);
+    if (start >= end) return false; // no more to render
+
+    for (let idx = start; idx < end; idx++) {
         const q = currentQuestions[idx];
         const card = document.createElement('div');
         card.className = 'question-card';
@@ -229,7 +219,7 @@ function renderQuestions() {
         if (q.type === 'MC') {
             const optionsDiv = document.createElement('div');
             optionsDiv.className = 'options-area';
-            const groupName = `q_${idx}_${Date.now()}`;
+            const groupName = `q_${idx}_${Date.now()}_${Math.random()}`;
             radioGroupName = groupName;
             const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
             q.options.forEach((opt, optIdx) => {
@@ -267,12 +257,13 @@ function renderQuestions() {
         // Feedback area
         const feedbackDiv = document.createElement('div');
         feedbackDiv.className = 'feedback';
-        feedbackDiv.id = `feedback_${idx}`;
+        feedbackDiv.id = `feedback_${idx}_${Date.now()}_${Math.random()}`;
         feedbackDiv.innerHTML = 'Click Check to grade.';
         card.appendChild(feedbackDiv);
 
         questionsContainer.appendChild(card);
 
+        // Store item info
         currentQuestionItems.push({
             id: idx,
             data: q,
@@ -283,20 +274,89 @@ function renderQuestions() {
             checkButton: checkBtn,
             pointsAdded: false
         });
-    }
 
-    // Bind check button events
-    for (let item of currentQuestionItems) {
-        item.checkButton.addEventListener('click', (e) => {
+        // Bind check button event for this item
+        checkBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            checkSingleQuestion(item);
+            const item = currentQuestionItems.find(i => i.id === idx);
+            if (item) checkSingleQuestion(item);
         });
     }
 
-    updateScoreSummary();
-    renderMath();
-    // Apply current explanation visibility to newly created feedback elements
-    toggleExplanationsVisibility();
+    renderedCount = end;
+    updateQuestionCount(); // Update after batch is added
+    return true; // rendered at least one
+}
+
+// Load more questions (triggered by scroll or initial load)
+function loadMore() {
+    if (loadingMore) return;
+    if (renderedCount >= currentQuestions.length) {
+        // All loaded, remove any scroll indicator or message
+        if (loadMoreContainer.innerHTML !== '') {
+            loadMoreContainer.innerHTML = '<div style="text-align:center; padding:10px; color:#666;">✨ All questions loaded</div>';
+        }
+        return;
+    }
+
+    loadingMore = true;
+    // Use setTimeout to allow UI to breathe and prevent blocking
+    setTimeout(() => {
+        const rendered = renderBatch();
+        loadingMore = false;
+        if (!rendered) {
+            // No more questions, show message
+            loadMoreContainer.innerHTML = '<div style="text-align:center; padding:10px; color:#666;">✨ All questions loaded</div>';
+        } else {
+            // If there are more questions, we may need to keep the container empty or show a subtle loading indicator
+            // But since we auto-load on scroll, we don't need a button.
+            // Clear any previous message if there are still questions left
+            if (renderedCount < currentQuestions.length) {
+                loadMoreContainer.innerHTML = '';
+            } else {
+                loadMoreContainer.innerHTML = '<div style="text-align:center; padding:10px; color:#666;">✨ All questions loaded</div>';
+            }
+        }
+        // Apply explanation visibility to new elements
+        toggleExplanationsVisibility();
+        renderMath();
+    }, 50);
+}
+
+// Scroll event handler: load more when near bottom
+function handleScroll() {
+    if (loadingMore) return;
+    if (renderedCount >= currentQuestions.length) return;
+
+    const scrollPosition = window.scrollY + window.innerHeight;
+    const threshold = document.documentElement.scrollHeight - 200; // 200px from bottom
+    if (scrollPosition >= threshold) {
+        loadMore();
+    }
+}
+
+// Toggle explanation visibility without re-rendering
+function toggleExplanationsVisibility() {
+    const explanationSpans = document.querySelectorAll('.explanation-text');
+    explanationSpans.forEach(span => {
+        span.style.display = showExplanations ? '' : 'none';
+    });
+}
+
+// Render math with KaTeX after DOM updates
+function renderMath() {
+    if (typeof renderMathInElement === 'function') {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false}
+            ],
+            throwOnError: false
+        });
+    } else {
+        // Wait 100ms and try again (library not loaded yet)
+        setTimeout(renderMath, 100);
+    }
 }
 
 // Check a single question (MC or LQ)
@@ -460,6 +520,11 @@ function init() {
             toggleExplanationsVisibility();
         });
     }
+    
+    // Add scroll listener for auto-load
+    window.addEventListener('scroll', handleScroll);
+    // Also check on window resize (might affect scroll position)
+    window.addEventListener('resize', handleScroll);
 }
 
 init();
