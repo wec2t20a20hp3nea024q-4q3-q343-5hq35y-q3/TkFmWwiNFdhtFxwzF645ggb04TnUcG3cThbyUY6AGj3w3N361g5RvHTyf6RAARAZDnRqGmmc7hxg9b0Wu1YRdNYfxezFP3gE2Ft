@@ -1,0 +1,296 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background: #e2e8f0;
+    font-family: 'Segoe UI', 'Roboto', 'Times New Roman', serif;
+    margin: 0;
+    padding: 24px;
+}
+
+/* main app layout */
+.app-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+
+/* editor panel */
+.editor-panel {
+    flex: 1.2;
+    min-width: 320px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+    padding: 20px;
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+}
+
+/* preview panel (word-like) */
+.preview-panel {
+    flex: 2.2;
+    min-width: 500px;
+    background: #f9fafb;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15);
+    overflow: auto;
+    padding: 16px;
+}
+
+.preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.preview-header h2 {
+    font-size: 1.4rem;
+    margin: 0;
+}
+
+.btn-group button {
+    background: #1e3a8a;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 40px;
+    font-weight: 600;
+    margin-left: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-group button:hover {
+    background: #0f2b66;
+}
+
+/* Question list styling */
+.questions-list {
+    margin-top: 20px;
+}
+
+.question-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 20px;
+    border: 1px solid #000000;
+    transition: 0.1s;
+}
+
+.q-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 12px;
+    align-items: center;
+}
+
+.q-row label {
+    font-weight: 600;
+    min-width: 60px;
+}
+
+input, select, textarea {
+    border: 1px solid #ffffff;
+    border-radius: 12px;
+    padding: 8px 12px;
+    font-family: inherit;
+    font-size: 0.85rem;
+}
+
+textarea {
+    width: 100%;
+    min-height: 70px;
+    font-family: 'Courier New', monospace;
+}
+
+.q-number, .q-marks {
+    width: 80px;
+}
+
+.q-section {
+    width: 100px;
+}
+
+.q-pages {
+    width: 80px;
+}
+
+.delete-btn {
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.add-btn {
+    background: #0f3b2c;
+    color: white;
+    border: none;
+    border-radius: 40px;
+    padding: 10px 20px;
+    font-weight: bold;
+    margin-top: 10px;
+    cursor: pointer;
+    width: 100%;
+}
+
+/* ---------- DOCUMENT STYLES (no colors) ---------- */
+.mock-exam-paper {
+    background: white;
+    width: 100%;
+    max-width: 210mm;
+    margin: 0 auto;
+    font-family: 'Times New Roman', 'Calibri', serif;
+    box-sizing: border-box;
+}
+
+/* Each page – uses flex to stretch answer box to bottom */
+.exam-page {
+    page-break-after: always;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 0.3in 0.4in;
+    background: white;
+    box-sizing: border-box;
+}
+
+.exam-page:last-child {
+    page-break-after: auto;
+}
+
+/* First page header */
+.first-page-header {
+    text-align: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #000;
+    padding-bottom: 15px;
+}
+
+.school-name {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0 10px;
+    border-bottom: 1px dashed #000;
+    padding-bottom: 12px;
+}
+
+.info-item {
+    font-size: 14px;
+}
+
+.underline {
+    display: inline-block;
+    min-width: 150px;
+    border-bottom: 1px solid black;
+    margin-left: 8px;
+}
+
+/* Marks table – narrow first column */
+.marks-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14px;
+}
+
+.marks-table th, .marks-table td {
+    border: 1px solid #000;
+    padding: 6px 8px;
+    text-align: left;
+}
+
+.marks-table th {
+    font-weight: bold;
+    background: none;
+}
+
+.marks-table th:first-child,
+.marks-table td:first-child {
+    width: 15%;
+}
+
+.marks-table th:last-child,
+.marks-table td:last-child {
+    width: 12%;
+}
+
+.section-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin: 0 0 20px 0;
+    padding: 0;
+    background: none;
+    border-left: none;
+}
+
+/* Question stem – no background */
+.question-stem {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 20px;
+    padding: 0;
+    background: none;
+}
+
+.question-number {
+    font-weight: 800;
+    font-size: 1.2rem;
+    margin-right: 12px;
+}
+
+/* Answer rectangle – stretches to fill remaining space */
+/* Answer rectangle – stretches to fill remaining space */
+.answer-rectangle {
+    flex: 1 1 0%;          /* takes all remaining vertical space */
+    min-height: 0;         /* allows flex child to shrink if needed */
+    border: none;          /* no outer border */
+    background: #ffffff;
+    background-image: repeating-linear-gradient(transparent, transparent 28px, #ccc 28px, #ccc 29px);
+    margin: 0;
+    width: 100%;
+}
+
+.continued-label {
+    font-size: 13px;
+    font-style: italic;
+    text-align: right;
+    color: #000;
+    margin-bottom: 10px;
+}
+
+.formula-ref {
+    margin-top: 20px;
+    font-size: 11px;
+    border-top: 1px solid #000;
+    padding-top: 15px;
+}
+
+button:active {
+    transform: scale(0.97);
+}
+
+.note {
+    font-size: 12px;
+    background: #fff3bf;
+    padding: 8px;
+    border-radius: 12px;
+    margin-top: 12px;
+}
