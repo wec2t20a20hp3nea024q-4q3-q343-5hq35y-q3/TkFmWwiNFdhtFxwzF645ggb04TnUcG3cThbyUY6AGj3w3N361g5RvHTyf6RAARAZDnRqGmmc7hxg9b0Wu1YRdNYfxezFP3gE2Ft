@@ -5,7 +5,7 @@ const FILTERS_STORAGE_KEY = 'dse_quiz_filters';
 if (typeof database !== 'undefined') {
     database.forEach((q, idx) => {
         if (!q.uid) {
-            q.uid = 'q_' + idx; // stable ID based on index
+            q.uid = 'q_' + idx;
         }
     });
 }
@@ -23,7 +23,7 @@ function saveState() {
     };
     currentQuestionItems.forEach(item => {
         const ans = item.getAnswer ? item.getAnswer() : '';
-        if (ans) state.answers[item.data.uid] = ans;  // use UID as key
+        if (ans) state.answers[item.data.uid] = ans;
         if (item.pointsAdded) state.scores[item.data.uid] = true;
     });
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -157,6 +157,55 @@ if (!loadAllBtn) {
     }
 }
 
+// ========== INACTIVITY UNLOADING ==========
+let inactivityTimer = null;
+const INACTIVITY_TIMEOUT = 20000; // 2 minutes
+let unloaded = false;
+let unloadedMessageDiv = null;
+
+function resetInactivityTimer() {
+    if (inactivityTimer) clearTimeout(inactivityTimer);
+    inactivityTimer = setTimeout(unloadIfIdle, INACTIVITY_TIMEOUT);
+}
+
+function unloadIfIdle() {
+    if (unloaded) return;
+    if (currentQuestionItems.length === 0) return;
+    // Remove all question cards
+    while (questionsContainer.firstChild) {
+        questionsContainer.removeChild(questionsContainer.firstChild);
+    }
+    currentQuestionItems = [];
+    renderedCount = 0;
+    unloaded = true;
+    updateQuestionCount();
+    // Show message
+    if (!unloadedMessageDiv) {
+        unloadedMessageDiv = document.createElement('div');
+        unloadedMessageDiv.className = 'unloaded-message';
+        unloadedMessageDiv.style.textAlign = 'center';
+        unloadedMessageDiv.style.padding = '2rem';
+        unloadedMessageDiv.style.color = '#666';
+        unloadedMessageDiv.style.fontStyle = 'italic';
+    }
+    unloadedMessageDiv.innerHTML = '⏸ Questions unloaded due to inactivity. Scroll or interact to reload.';
+    questionsContainer.appendChild(unloadedMessageDiv);
+}
+
+function reloadIfUnloaded() {
+    if (unloaded) {
+        if (unloadedMessageDiv && unloadedMessageDiv.parentNode) {
+            unloadedMessageDiv.remove();
+        }
+        unloaded = false;
+        loadQuestions(false);
+        resetInactivityTimer();
+        return true;
+    }
+    return false;
+}
+// =========================================
+
 function populateSubjects() {
     const subjects = getUniqueValues(database, 'subject');
     subjectSelect.innerHTML = '<option value="all">All Subjects</option>';
@@ -212,7 +261,7 @@ function updateSubtopics(skipLoad = false) {
     subtopicSelect.disabled = false;
     typeSelect.disabled = false;
     if (!skipLoad) {
-        loadQuestions(); // no longer pass clearState
+        loadQuestions();
     }
 }
 
@@ -237,8 +286,6 @@ function loadQuestions() {
     loadMoreContainer.innerHTML = '';
     totalQuestionCountDisplay.textContent = currentQuestions.length;
 
-    // DO NOT clear savedState – answers will be restored for questions that are present
-
     if (loadAllBtn) {
         loadAllBtn.disabled = false;
         loadAllBtn.style.display = '';
@@ -246,6 +293,7 @@ function loadQuestions() {
 
     loadMore();
     updateScoreSummary();
+    resetInactivityTimer();
 }
 
 function updateQuestionCount() {
@@ -300,7 +348,7 @@ function renderBatch() {
         if (q.type === 'MC') {
             const optionsDiv = document.createElement('div');
             optionsDiv.className = 'options-area';
-            const groupName = `q_${q.uid}_${Date.now()}_${Math.random()}`; // use uid in group name for uniqueness
+            const groupName = `q_${q.uid}_${Date.now()}_${Math.random()}`;
             radioGroupName = groupName;
             const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
             q.options.forEach((opt, optIdx) => {
@@ -359,6 +407,7 @@ function renderBatch() {
             e.stopPropagation();
             const item = currentQuestionItems.find(i => i.data.uid === q.uid);
             if (item) checkSingleQuestion(item);
+            resetInactivityTimer();
         });
     }
 
@@ -410,6 +459,7 @@ function loadMore() {
 }
 
 function loadAllQuestions() {
+    if (reloadIfUnloaded()) return;
     if (renderedCount >= currentQuestions.length) {
         if (loadAllBtn) loadAllBtn.disabled = true;
         return;
@@ -433,9 +483,11 @@ function loadAllQuestions() {
         }
     }
     loadNextBatch();
+    resetInactivityTimer();
 }
 
 function handleScroll() {
+    if (reloadIfUnloaded()) return;
     if (loadingMore) return;
     if (renderedCount >= currentQuestions.length) return;
     const scrollPosition = window.scrollY + window.innerHeight;
@@ -521,6 +573,7 @@ function checkSingleQuestion(item) {
             }
             fbDiv.querySelector('.lq-buttons').innerHTML = '<span style="color:green;">✓ Marked as correct</span>';
             saveState();
+            resetInactivityTimer();
         };
         const handleWrong = () => {
             if (item.pointsAdded) {
@@ -529,6 +582,7 @@ function checkSingleQuestion(item) {
             }
             fbDiv.querySelector('.lq-buttons').innerHTML = '<span style="color:red;">✗ Marked as wrong</span>';
             saveState();
+            resetInactivityTimer();
         };
         correctBtn.onclick = handleCorrect;
         wrongBtn.onclick = handleWrong;
@@ -550,6 +604,7 @@ function subtractPoints(points) {
 }
 
 function resetAll() {
+    if (reloadIfUnloaded()) return;
     for (let item of currentQuestionItems) {
         item.feedbackDiv.innerHTML = 'Click Check to grade.';
         item.feedbackDiv.className = 'feedback';
@@ -568,7 +623,8 @@ function resetAll() {
     }
     totalScoreSpan.textContent = '0';
     updateScoreSummary();
-    saveState(); // this will overwrite saved state with empty answers
+    saveState();
+    resetInactivityTimer();
 }
 
 function updateScoreSummary() {
@@ -588,28 +644,38 @@ function escapeHtml(str) {
 
 function bindFilterEvents() {
     subjectSelect.addEventListener('change', () => {
+        reloadIfUnloaded();
         updateTopics(false);
         loadQuestions();
         saveFilters();
+        resetInactivityTimer();
     });
     topicSelect.addEventListener('change', () => {
+        reloadIfUnloaded();
         updateSubtopics(false);
         loadQuestions();
         saveFilters();
+        resetInactivityTimer();
     });
     subtopicSelect.addEventListener('change', () => {
+        reloadIfUnloaded();
         loadQuestions();
         saveFilters();
+        resetInactivityTimer();
     });
     typeSelect.addEventListener('change', () => {
+        reloadIfUnloaded();
         loadQuestions();
         saveFilters();
+        resetInactivityTimer();
     });
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
         searchInput.addEventListener('input', () => {
+            reloadIfUnloaded();
             loadQuestions();
             saveFilters();
+            resetInactivityTimer();
         });
     }
 }
@@ -659,6 +725,7 @@ function init() {
             showExplanations = e.target.checked;
             toggleExplanationsVisibility();
             saveState();
+            resetInactivityTimer();
         });
     }
     
@@ -669,6 +736,8 @@ function init() {
     if (loadAllBtn) {
         loadAllBtn.addEventListener('click', loadAllQuestions);
     }
+    
+    resetInactivityTimer();
 }
 
 init();
@@ -700,6 +769,7 @@ loginButton.addEventListener('click', (e) => {
     } else {
         loginModal.style.display = 'flex';
     }
+    resetInactivityTimer();
 });
 
 document.addEventListener('click', (e) => {
@@ -725,12 +795,15 @@ loginSubmit.addEventListener('click', () => {
     } else {
         alert('Authentication not available. Please check account.js.');
     }
+    resetInactivityTimer();
 });
 
 document.getElementById('submitAllBtn').addEventListener('click', () => {
+    if (reloadIfUnloaded()) return;
     for (let item of currentQuestionItems) {
         checkSingleQuestion(item);
     }
+    resetInactivityTimer();
 });
 
 function closeModal() {
@@ -746,4 +819,5 @@ logoutLink.addEventListener('click', (e) => {
     if (typeof saveCurrentUser !== 'undefined') saveCurrentUser(null);
     updateLoginUI();
     dropdownMenu.style.display = 'none';
+    resetInactivityTimer();
 });
