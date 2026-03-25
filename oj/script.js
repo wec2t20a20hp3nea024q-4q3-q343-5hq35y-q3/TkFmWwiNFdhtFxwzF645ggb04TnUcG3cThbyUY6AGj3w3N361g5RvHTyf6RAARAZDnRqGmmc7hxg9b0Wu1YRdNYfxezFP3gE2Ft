@@ -14,12 +14,16 @@ if (typeof database !== 'undefined') {
 let savedState = null;
 let restoredFirstBatch = false;
 
+// Math rendering toggle
+let mathRenderingEnabled = true;
+
 function saveState() {
     const state = {
         answers: {},
         scores: {},
         totalScore: document.getElementById('totalScoreDisplay').innerText,
-        showExplanations: document.getElementById('toggleExplanation')?.checked || true
+        showExplanations: document.getElementById('toggleExplanation')?.checked || true,
+        mathRenderingEnabled: mathRenderingEnabled   // store toggle state
     };
     currentQuestionItems.forEach(item => {
         const ans = item.getAnswer ? item.getAnswer() : '';
@@ -154,6 +158,47 @@ if (!loadAllBtn) {
         statsBar.appendChild(loadAllBtn);
     } else {
         console.warn('Stats bar not found, cannot create Load all button');
+    }
+}
+
+// MATH TOGGLE BUTTON
+let mathToggleBtn = document.getElementById('mathToggleBtn');
+if (!mathToggleBtn) {
+    const statsBar = document.querySelector('.stats-bar');
+    if (statsBar) {
+        mathToggleBtn = document.createElement('button');
+        mathToggleBtn.id = 'mathToggleBtn';
+        mathToggleBtn.className = 'math-toggle-btn';
+        mathToggleBtn.textContent = 'Math: ON';
+        statsBar.appendChild(mathToggleBtn);
+    } else {
+        console.warn('Stats bar not found, cannot create Math toggle button');
+    }
+}
+
+function toggleMathRendering() {
+    mathRenderingEnabled = !mathRenderingEnabled;
+    if (mathToggleBtn) {
+        mathToggleBtn.textContent = mathRenderingEnabled ? 'Math: ON' : 'Math: OFF';
+    }
+    if (mathRenderingEnabled) {
+        renderAllMath(); // re-render all math now that it's enabled
+    }
+    saveState(); // store the toggle state
+}
+
+function renderAllMath() {
+    if (!mathRenderingEnabled) return;
+    if (typeof renderMathInElement === 'function') {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false}
+            ],
+            throwOnError: false
+        });
+    } else {
+        setTimeout(renderAllMath, 100);
     }
 }
 
@@ -373,6 +418,12 @@ function renderBatch() {
             showExplanations = savedState.showExplanations;
             toggleExplanationsVisibility();
         }
+        if (savedState.mathRenderingEnabled !== undefined) {
+            mathRenderingEnabled = savedState.mathRenderingEnabled;
+            if (mathToggleBtn) {
+                mathToggleBtn.textContent = mathRenderingEnabled ? 'Math: ON' : 'Math: OFF';
+            }
+        }
         restoredFirstBatch = true;
     }
 
@@ -405,7 +456,7 @@ function loadMore() {
             }
         }
         toggleExplanationsVisibility();
-        renderMath();
+        renderMath(); // this will respect mathRenderingEnabled
     }, 50);
 }
 
@@ -453,6 +504,7 @@ function toggleExplanationsVisibility() {
 }
 
 function renderMath() {
+    if (!mathRenderingEnabled) return;
     if (typeof renderMathInElement === 'function') {
         renderMathInElement(document.body, {
             delimiters: [
@@ -615,36 +667,62 @@ function bindFilterEvents() {
 }
 
 function init() {
-    // Load saved filters first
+    // Load saved filters first (but don't apply yet)
     const savedFilters = loadFilters();
-    if (savedFilters) {
-        if (savedFilters.subject && savedFilters.subject !== 'all') {
-            subjectSelect.value = savedFilters.subject;
-        }
-        if (savedFilters.topic && savedFilters.topic !== 'all') {
-            topicSelect.value = savedFilters.topic;
-        }
-        if (savedFilters.subtopic && savedFilters.subtopic !== 'all') {
-            subtopicSelect.value = savedFilters.subtopic;
-        }
-        if (savedFilters.type && savedFilters.type !== 'all') {
-            typeSelect.value = savedFilters.type;
-        }
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput && savedFilters.search) {
-            searchInput.value = savedFilters.search;
-        }
-    }
-
-    // Build dropdowns without loading questions (skipLoad = true)
+    
+    // 1. Populate subjects (creates subject dropdown options)
     populateSubjects();
+    
+    // 2. Apply saved subject filter (if any)
+    if (savedFilters && savedFilters.subject && savedFilters.subject !== 'all') {
+        // Check if the subject exists in the dropdown (it should)
+        const subjectExists = Array.from(subjectSelect.options).some(opt => opt.value === savedFilters.subject);
+        if (subjectExists) subjectSelect.value = savedFilters.subject;
+    }
+    
+    // 3. Build topics based on the (possibly saved) subject, but skip loading
     updateTopics(true);
-
-    // Load saved question state
+    
+    // 4. Apply saved topic filter (if any)
+    if (savedFilters && savedFilters.topic && savedFilters.topic !== 'all') {
+        const topicExists = Array.from(topicSelect.options).some(opt => opt.value === savedFilters.topic);
+        if (topicExists) topicSelect.value = savedFilters.topic;
+    }
+    
+    // 5. Build subtopics based on the saved subject/topic, skip loading
+    updateSubtopics(true);
+    
+    // 6. Apply saved subtopic filter (if any)
+    if (savedFilters && savedFilters.subtopic && savedFilters.subtopic !== 'all') {
+        const subtopicExists = Array.from(subtopicSelect.options).some(opt => opt.value === savedFilters.subtopic);
+        if (subtopicExists) subtopicSelect.value = savedFilters.subtopic;
+    }
+    
+    // 7. Apply saved type filter (dropdown already has options)
+    if (savedFilters && savedFilters.type && savedFilters.type !== 'all') {
+        const typeExists = Array.from(typeSelect.options).some(opt => opt.value === savedFilters.type);
+        if (typeExists) typeSelect.value = savedFilters.type;
+    }
+    
+    // 8. Apply saved search term
+    const searchInput = document.getElementById('searchInput');
+    if (savedFilters && savedFilters.search && searchInput) {
+        searchInput.value = savedFilters.search;
+    }
+    
+    // 9. Load saved question state (answers, scores, toggles)
     savedState = loadState();
-    loadQuestions(); // this will restore answers via applySavedStateToItem
-
+    if (savedState && savedState.mathRenderingEnabled !== undefined) {
+        mathRenderingEnabled = savedState.mathRenderingEnabled;
+    }
+    
+    // 10. Finally, load the questions (which will also restore answers via applySavedStateToItem)
+    loadQuestions();
+    
+    // 11. Bind filter events (these will also save filters on change)
     bindFilterEvents();
+    
+    // 12. Attach other event listeners
     resetBtn.addEventListener('click', resetAll);
     
     const toggleCheckbox = document.getElementById('toggleExplanation');
@@ -668,6 +746,10 @@ function init() {
     
     if (loadAllBtn) {
         loadAllBtn.addEventListener('click', loadAllQuestions);
+    }
+    if (mathToggleBtn) {
+        mathToggleBtn.addEventListener('click', toggleMathRendering);
+        mathToggleBtn.textContent = mathRenderingEnabled ? 'Math: ON' : 'Math: OFF';
     }
 }
 
