@@ -6,14 +6,63 @@
 const cs = 450;
 const movement = [
   { time: 0, type: 'judgement_line', xpos: 0, ypos: 500, speed: 0, dir: 0 },
-  { time: 0.0, type: 'tap',   xpos: 150,  ypos: 60, speed: cs, dir: 90 },
-  { time: 0.0, type: 'tap',   xpos: 300,  ypos: 60, speed: cs, dir: 90 },
-  { time: 0.0, type: 'tap',   xpos: 450,  ypos: 60, speed: cs, dir: 90 },
-  { time: 0.0, type: 'tap',   xpos: 600,  ypos: 60, speed: cs, dir: 90 },
-  { time: 0.8, type: 'drag',   xpos: 100,  ypos: 60, speed: cs, dir: 90 },
-  { time: 0.9, type: 'drag',   xpos: 200,  ypos: 60, speed: cs, dir: 90 },
-  { time: 1.0, type: 'drag',   xpos: 300,  ypos: 60, speed: cs, dir: 90 },
-  { time: 1.1, type: 'drag',   xpos: 400,  ypos: 60, speed: cs, dir: 90 },
+  { time: 0, type: 'tap', xpos: 150, ypos: 20, speed: 450, dir: 90 },
+  { time: 0, type: 'tap', xpos: 450, ypos: 20, speed: 450, dir: 90 },
+  { time: 0.17, type: 'tap', xpos: 300, ypos: 20, speed: 450, dir: 90 },
+  { time: 0.51, type: 'tap', xpos: 600, ypos: 20, speed: 450, dir: 90 },
+  { time: 0.85, type: 'tap', xpos: 450, ypos: 20, speed: 450, dir: 90 },
+  { time: 1.02, type: 'tap', xpos: 300, ypos: 20, speed: 450, dir: 90 },
+  { time: 1.36, type: 'tap', xpos: 150, ypos: 20, speed: 450, dir: 90 },
+  { time: 1.36, type: 'tap', xpos: 300, ypos: 20, speed: 450, dir: 90 },
+  { time: 1.53, type: 'tap', xpos: 450, ypos: 20, speed: 450, dir: 90 },
+  { time: 1.87, type: 'tap', xpos: 600, ypos: 20, speed: 450, dir: 90 },
+  { time: 2.21, type: 'tap', xpos: 150, ypos: 20, speed: 450, dir: 90 },
+  { time: 2.38, type: 'tap', xpos: 300, ypos: 20, speed: 450, dir: 90 },
+  { time: 2.55, type: 'tap', xpos: 600, ypos: 20, speed: 450, dir: 90 },
+  { time: 2.72, type: 'tap', xpos: 600, ypos: 20, speed: 450, dir: 90 },
+  { time: 2.72, type: 'tap', xpos: 450, ypos: 20, speed: 450, dir: 90 },
+  { time: 2.89, type: 'tap', xpos: 300, ypos: 20, speed: 450, dir: 90 },
+  { time: 3.23, type: 'tap', xpos: 450, ypos: 20, speed: 450, dir: 90 },
+  { time: 3.57, type: 'tap', xpos: 450, ypos: 20, speed: 450, dir: 90 },
+  { time: 3.74, type: 'tap', xpos: 600, ypos: 20, speed: 450, dir: 90 },
+  { time: 4.08, type: 'tap', xpos: 150, ypos: 20, speed: 450, dir: 90 },
+  { time: 4.08, type: 'tap', xpos: 450, ypos: 20, speed: 450, dir: 90 },
+  { time: 4.59, type: 'tap', xpos: 300, ypos: 20, speed: 450, dir: 90 },
+  { time: 4.93, type: 'tap', xpos: 300, ypos: 20, speed: 450, dir: 90 },
+  { time: 5.1, type: 'tap', xpos: 450, ypos: 20, speed: 450, dir: 90 },
+  { time: 5.44, type: 'tap', xpos: 150, ypos: 20, speed: 450, dir: 90 },
+  { time: 5.44, type: 'tap', xpos: 600, ypos: 20, speed: 450, dir: 90 },
+  { time: 5.61, type: 'tap', xpos: 300, ypos: 20, speed: 450, dir: 90 },
+  { time: 5.78, type: 'tap', xpos: 450, ypos: 20, speed: 450, dir: 90 },
+  { time: 5.95, type: 'tap', xpos: 600, ypos: 20, speed: 450, dir: 90 },
+  { time: 6.12, type: 'tap', xpos: 600, ypos: 20, speed: 450, dir: 90 },
+  { time: 6.12, type: 'tap', xpos: 450, ypos: 20, speed: 450, dir: 90 },
+  { time: 6.29, type: 'tap', xpos: 450, ypos: 20, speed: 450, dir: 90 },
+  { time: 6.29, type: 'tap', xpos: 300, ypos: 20, speed: 450, dir: 90 },
+  { time: 6.46, type: 'tap', xpos: 300, ypos: 20, speed: 450, dir: 90 },
+  { time: 6.46, type: 'tap', xpos: 150, ypos: 20, speed: 450, dir: 90 },
+  { time: 6.8, type: 'tap', xpos: 150, ypos: 20, speed: 450, dir: 90 },
+  { time: 6.8, type: 'tap', xpos: 450, ypos: 20, speed: 450, dir: 90 },
+  { time: 6.97, type: 'tap', xpos: 300, ypos: 20, speed: 450, dir: 90 },
+  { time: 7.14, type: 'tap', xpos: 450, ypos: 20, speed: 450, dir: 90 },
+  { time: 7.31, type: 'tap', xpos: 150, ypos: 20, speed: 450, dir: 90 },
+  { time: 7.31, type: 'tap', xpos: 600, ypos: 20, speed: 450, dir: 90 },
+  { time: 7.48, type: 'tap', xpos: 150, ypos: 20, speed: 450, dir: 90 },
+  { time: 7.48, type: 'tap', xpos: 600, ypos: 20, speed: 450, dir: 90 },
+  { time: 7.82, type: 'tap', xpos: 450, ypos: 20, speed: 450, dir: 90 },
+  { time: 7.82, type: 'tap', xpos: 600, ypos: 20, speed: 450, dir: 90 },
+  { time: 8.33, type: 'tap', xpos: 300, ypos: 20, speed: 450, dir: 90 },
+  { time: 8.33, type: 'tap', xpos: 600, ypos: 20, speed: 450, dir: 90 },
+  { time: 8.5, type: 'tap', xpos: 450, ypos: 20, speed: 450, dir: 90 },
+  { time: 8.67, type: 'tap', xpos: 300, ypos: 20, speed: 450, dir: 90 },
+  { time: 8.84, type: 'tap', xpos: 150, ypos: 20, speed: 450, dir: 90 },
+  { time: 8.84, type: 'tap', xpos: 450, ypos: 20, speed: 450, dir: 90 },
+  { time: 9.18, type: 'tap', xpos: 150, ypos: 20, speed: 450, dir: 90 },
+  { time: 9.18, type: 'tap', xpos: 450, ypos: 20, speed: 450, dir: 90 },
+  { time: 9.35, type: 'tap', xpos: 300, ypos: 20, speed: 450, dir: 90 },
+  { time: 9.35, type: 'tap', xpos: 600, ypos: 20, speed: 450, dir: 90 },
+  { time: 9.52, type: 'tap', xpos: 150, ypos: 20, speed: 450, dir: 90 },
+  { time: 9.52, type: 'tap', xpos: 600, ypos: 20, speed: 450, dir: 90 },
 ];
 
 // ------------------------------
@@ -28,14 +77,16 @@ let lastTimestamp = null;
 let combo = 0;
 
 // Multi‑touch tracking – each pointer has its own state
-let activeTouches = new Map();   // key: pointerId, value: { flickRemoved, lastX, lastY }
+let activeTouches = new Map();   // key: pointerId, value: { flickRemoved, ignoreClick, startPos, startTime, lastX, lastY }
 
-// Constants
-const STAGE_WIDTH = 1200;
+// Constants (match CSS)
+const STAGE_WIDTH = 900;
 const STAGE_HEIGHT = 600;
 const JUDGEMENT_LINE_Y = 504;
 const JUDGEMENT_TOLERANCE = 55;
 const HIT_X_TOLERANCE = 70;
+const TAP_MAX_DURATION = 200;      // ms
+const TAP_MAX_MOVE = 10;           // pixels
 
 // DOM elements
 const stage = document.getElementById('stage');
@@ -44,6 +95,13 @@ const resetBtn = document.getElementById('resetBtn');
 const stopBtn = document.getElementById('stopBtn');
 const activeCountSpan = document.getElementById('activeCount');
 const comboSpan = document.getElementById('comboCount');
+
+// Audio & speed multiplier
+const bgm = document.getElementById('bgm');
+const speedMultiplierInput = document.getElementById('speedMultiplier');
+const audioDelayInput = document.getElementById('audioDelay');
+let speedMultiplier = 1.0;
+let audioTimeout = null;
 
 // Helper functions
 function updateActiveCount() {
@@ -67,25 +125,12 @@ function isOutOfBounds(obj) {
   const right = left + obj.width, bottom = top + obj.height;
   return right < 0 || left > STAGE_WIDTH || bottom < 0 || top > STAGE_HEIGHT;
 }
-function getPointerCoords(event) {
-  const rect = stage.getBoundingClientRect();
-  let clientX, clientY;
-  if (event.touches) {
-    clientX = event.touches[0].clientX;
-    clientY = event.touches[0].clientY;
-  } else {
-    clientX = event.clientX;
-    clientY = event.clientY;
-  }
-  return { x: clientX - rect.left, y: clientY - rect.top };
-}
-// Get coords for a specific pointer event (multi‑touch)
 function getPointerCoordsById(event) {
   const rect = stage.getBoundingClientRect();
   return { x: event.clientX - rect.left, y: event.clientY - rect.top };
 }
 
-// Spawn & animation (unchanged)
+// Spawn & animation
 function spawn_item(currentTimeSec) {
   while (spawnIndex < movement.length && movement[spawnIndex].time <= currentTimeSec) {
     const data = movement[spawnIndex];
@@ -142,7 +187,30 @@ function animate(now) {
 }
 function startAnimation() {
   if (animating) return;
+
+  // Stop any currently playing audio
+  bgm.pause();
+  bgm.currentTime = 0;
+  if (audioTimeout) clearTimeout(audioTimeout);
+
+  // Reset all objects and state
   resetAllObjects();
+
+  // Read current multiplier (fixed values for testing)
+  speedMultiplier = 1.3;
+  const delayMs = 800;
+
+  // Play audio after delay (if delayMs > 0)
+  if (delayMs > 0) {
+    audioTimeout = setTimeout(() => {
+      bgm.play().catch(e => console.warn('Audio play failed:', e));
+      audioTimeout = null;
+    }, delayMs);
+  } else {
+    bgm.play().catch(e => console.warn('Audio play failed:', e));
+  }
+
+  // Start animation
   spawnIndex = 0;
   animStartTime = performance.now();
   lastTimestamp = null;
@@ -150,6 +218,12 @@ function startAnimation() {
   animate(performance.now());
 }
 function resetAllObjects() {
+  bgm.pause();
+  bgm.currentTime = 0;
+  if (audioTimeout) {
+    clearTimeout(audioTimeout);
+    audioTimeout = null;
+  }
   combo = 0;
   updateCombo();
   if (animationId) cancelAnimationFrame(animationId);
@@ -161,7 +235,6 @@ function resetAllObjects() {
   updateActiveCount();
   animStartTime = null;
   lastTimestamp = null;
-  // Clear all touch states
   activeTouches.clear();
 }
 
@@ -170,7 +243,6 @@ function resetAllObjects() {
 // ------------------------------------------------------------------
 
 // Helper: remove the nearest object of given type within tolerance
-// Returns the removed object or null if none.
 function removeNearest(x, typeFilter) {
   let best = null;
   let bestDist = Infinity;
@@ -198,11 +270,12 @@ function removeNearest(x, typeFilter) {
   return null;
 }
 
-// Tap handler (only for tap objects) – single tap uses click, works with any finger
+// Tap handler – used for mouse clicks (backup)
 stage.addEventListener('click', (event) => {
-  // If this click is the result of a drag/flick removal, ignore it
-  if (window._ignoreNextClick) {
-    window._ignoreNextClick = false;
+  const pid = event.pointerId;
+  const touch = activeTouches.get(pid);
+  if (touch && touch.ignoreClick) {
+    touch.ignoreClick = false;   // consume the flag
     return;
   }
   const rect = stage.getBoundingClientRect();
@@ -219,24 +292,25 @@ stage.addEventListener('pointerdown', (event) => {
   const { x, y } = getPointerCoordsById(event);
   activeTouches.set(id, {
     flickRemoved: false,
+    ignoreClick: false,
+    startPos: { x, y },
+    startTime: performance.now(),
     lastX: x,
     lastY: y,
   });
   event.preventDefault();
 });
 
-// Pointer move – process drag and flick for each active touch
+// Pointer move – process drag and flick
 stage.addEventListener('pointermove', (event) => {
   const id = event.pointerId;
   const touch = activeTouches.get(id);
-  if (!touch) return; // not tracked (shouldn't happen)
+  if (!touch) return;
 
   const { x, y } = getPointerCoordsById(event);
-  // Update last position
   touch.lastX = x;
   touch.lastY = y;
 
-  // Only consider if near judgement line
   if (Math.abs(y - JUDGEMENT_LINE_Y) <= JUDGEMENT_TOLERANCE) {
     // Drags: remove any drag object at this x (continuous)
     removeNearest(x, 'drag');
@@ -245,17 +319,41 @@ stage.addEventListener('pointermove', (event) => {
     if (!touch.flickRemoved) {
       if (removeNearest(x, 'flick')) {
         touch.flickRemoved = true;
-        // Prevent the click that would follow this drag/flick
-        window._ignoreNextClick = true;
+        touch.ignoreClick = true;
       }
     }
   }
 });
 
-// Pointer up – remove the touch
+// Pointer up – detect tap and clean up
 stage.addEventListener('pointerup', (event) => {
   const id = event.pointerId;
+  const touch = activeTouches.get(id);
+  if (!touch) return;
+
+  const { x, y } = getPointerCoordsById(event);
+  const duration = performance.now() - touch.startTime;
+  const dx = x - touch.startPos.x;
+  const dy = y - touch.startPos.y;
+  const movement = Math.hypot(dx, dy);
+
+  // Check for tap (short duration, little movement, near judgement line)
+  if (duration <= TAP_MAX_DURATION && movement <= TAP_MAX_MOVE) {
+    if (Math.abs(y - JUDGEMENT_LINE_Y) <= JUDGEMENT_TOLERANCE) {
+      if (removeNearest(x, 'tap')) {
+        touch.ignoreClick = true;   // prevent click event
+      }
+    }
+  }
+
+  // Remove the touch entry
   activeTouches.delete(id);
+});
+
+// Disable right-click context menu
+document.addEventListener('contextmenu', (event) => {
+  event.preventDefault();
+  return false;
 });
 
 // Button listeners
