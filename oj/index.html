@@ -1,3 +1,4 @@
+index.html inside oj: 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -104,18 +105,23 @@
     <script>
         requireAuth();  // Immediately check and redirect if not logged in
     </script>
-    <script src="./database.js"></script>
-    <script src="script.js"></script>
     <script>
-        // ======================== DATABASE ========================
-        
-        // Helper: get unique values for a given key
-        function getUniqueValues(array, key) {
-            const values = array.map(item => item[key]).filter(v => v);
-            return [...new Set(values)].sort();
-        }
-
-        updateLoginUI();
+        let database = [];
+        fetch('./database.json')
+            .then(r => r.json())
+            .then(data => {
+                database = data;
+                const s = document.createElement('script');
+                s.src = 'script.js';
+                s.onload = function() {
+                    updateLoginUI();
+                };
+                document.body.appendChild(s);
+            })
+            .catch(err => {
+                console.error('Failed to load database:', err);
+                document.getElementById('questionsContainer').innerHTML = '<div style="text-align:center;padding:3rem;color:red;">Failed to load question data.</div>';
+            });
     </script>
 </body>
 </html>
