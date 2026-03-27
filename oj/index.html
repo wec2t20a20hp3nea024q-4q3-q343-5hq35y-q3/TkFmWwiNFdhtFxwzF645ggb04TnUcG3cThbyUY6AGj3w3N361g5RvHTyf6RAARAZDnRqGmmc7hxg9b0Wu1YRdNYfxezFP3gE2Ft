@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>DSE Online Judge v2.0.2</title>
+    <title>DSE Online Judge</title>
     <link rel="stylesheet" href="styles.css">
     <!-- KaTeX CSS and JS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
@@ -41,7 +40,7 @@
     <div class="container">
         <div class="quiz-header">
             <h1>DSE Online Judge</h1>
-            <p>Rules:<br>1. DO NOT CLICK SUBMIT ALL when rendered questions>300!!!<br>PLEASE REFER TO SOURCE DOCUMENT FOR IMAGES, AS DATABASE IS NOT UPDATED</p>
+            <p>Hello World</p>
         </div>
         <div class="filter-bar">
             <div class="filter-group">
@@ -102,26 +101,18 @@
     </footer>
 
     <script src="../account.js"></script>
+    <script src="./database.js"></script>
+    <script src="script.js"></script>
     <script>
-        requireAuth();  // Immediately check and redirect if not logged in
-    </script>
-    <script>
-        let database = [];
-        fetch('./database.json')
-            .then(r => r.json())
-            .then(data => {
-                database = data;
-                const s = document.createElement('script');
-                s.src = 'script.js';
-                s.onload = function() {
-                    updateLoginUI();
-                };
-                document.body.appendChild(s);
-            })
-            .catch(err => {
-                console.error('Failed to load database:', err);
-                document.getElementById('questionsContainer').innerHTML = '<div style="text-align:center;padding:3rem;color:red;">Failed to load question data.</div>';
-            });
+        // ======================== DATABASE ========================
+        
+        // Helper: get unique values for a given key
+        function getUniqueValues(array, key) {
+            const values = array.map(item => item[key]).filter(v => v);
+            return [...new Set(values)].sort();
+        }
+
+        updateLoginUI();
     </script>
 </body>
 </html>
