@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <title>淺藍白待辦清單 · 輕量記事本</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(145deg, #d9eaff 0%, #c2e0ff 100%);
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', system-ui, -apple-system, sans-serif;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 主卡片 — 淺藍白核心主題 */
+        .todo-app {
+            max-width: 680px;
+            width: 100%;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 2.5rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 80, 120, 0.25), 0 1px 3px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        /* 頁首區域 */
+        .app-header {
+            background: #f0fbff;
+            padding: 1.8rem 1.8rem 1.2rem 1.8rem;
+            border-bottom: 1px solid #cde9fe;
+        }
+
+        .app-header h1 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #1a7fbf, #4fa8e0);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .app-header h1::before {
+            content: "✓";
+            background: none;
+            color: #2e93d0;
+            font-size: 2rem;
+            font-weight: 500;
+        }
+
+        .sub {
+            font-size: 0.85rem;
+            color: #5d9bc9;
+            margin-top: 0.4rem;
+            font-weight: 450;
+        }
+
+        /* 新增任務區塊 */
+        .add-task-section {
+            padding: 1.2rem 1.8rem 0.8rem 1.8rem;
+            background: #ffffff;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+            background: #f7fbfe;
+            border-radius: 3rem;
+            padding: 0.2rem 0.2rem 0.2rem 1.2rem;
+            border: 1px solid #d4eaff;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+
+        .input-group:focus-within {
+            border-color: #7bbce6;
+            box-shadow: 0 0 0 3px rgba(100, 180, 240, 0.2);
+            background: #ffffff;
+        }
+
+        .task-input {
+            flex: 1;
+            padding: 0.9rem 0;
+            border: none;
+            background: transparent;
+            font-size: 1rem;
+            outline: none;
+            color: #1f3e53;
+            font-weight: 500;
+        }
+
+        .task-input::placeholder {
+            color: #aacbe2;
+            font-weight: 400;
+        }
+
+        .add-btn {
+            background: #7bc0ed;
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 0.6rem 1.5rem;
+            border-radius: 2.5rem;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 6px rgba(70, 150, 210, 0.2);
+        }
+
+        .add-btn:hover {
+            background: #5faadc;
+            transform: scale(0.97);
+            box-shadow: 0 1px 3px rgba(70, 150, 210, 0.3);
+        }
+
+        /* 統計與工具列 */
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 0.8rem 1.8rem 0.4rem 1.8rem;
+            font-size: 0.85rem;
+            color: #4682b4;
+            border-bottom: 1px solid #e9f3fc;
+            margin-bottom: 0.2rem;
+        }
+
+        .counter {
+            background: #e3f0fa;
+            padding: 0.2rem 0.7rem;
+            border-radius: 40px;
+            font-weight: 500;
+            color: #2b6c9e;
+        }
+
+        .clear-completed {
+            background: none;
+            border: none;
+            color: #6eacd4;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 0.3rem 0.8rem;
+            border-radius: 30px;
+            transition: 0.2s;
+        }
+
+        .clear-completed:hover {
+            background: #eef5fc;
+            color: #2f7eb0;
+        }
+
+        /* 待辦列表容器 */
+        .todo-list-container {
+            padding: 0.2rem 1rem 1.5rem 1rem;
+            background: #ffffff;
+        }
+
+        .todo-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+        }
+
+        /* 每個任務項目 — 淺白藍卡片風格 */
+        .todo-item {
+            background: #fefeff;
+            border-radius: 1.6rem;
+            padding: 0.8rem 1rem 0.8rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: all 0.2s;
+            border: 1px solid #e1f0fe;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+        }
+
+        .todo-item:hover {
+            background: #fafdff;
+            border-color: #cae5fc;
+            box-shadow: 0 4px 10px rgba(70, 140, 200, 0.08);
+        }
+
+        /* 自定義 checkbox */
+        .todo-check {
+            width: 1.4rem;
+            height: 1.4rem;
+            accent-color: #5faee3;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: 0.1s;
+        }
+
+        .todo-text {
+            flex: 1;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #1f4868;
+            word-break: break-word;
+            padding: 0.2rem 0;
+            transition: 0.2s;
+            line-height: 1.4;
+        }
+
+        /* 完成項目樣式 */
+        .todo-item.completed .todo-text {
+            text-decoration: line-through;
+            color: #8eb9d4;
+            font-weight: 400;
+        }
+
+        /* 按鈕組 */
+        .todo-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .edit-btn, .delete-btn {
+            background: transparent;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.3rem 0.5rem;
+            border-radius: 2rem;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.7;
+        }
+
+        .edit-btn:hover {
+            background: #e3f0fa;
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        .delete-btn:hover {
+            background: #ffe7e5;
+            opacity: 1;
+            color: #dc6b5c;
+            transform: scale(1.05);
+        }
+
+        /* 空狀態提示 */
+        .empty-message {
+            text-align: center;
+            padding: 2.5rem 1rem;
+            color: #96bbd9;
+            font-size: 0.95rem;
+            background: #fbfeff;
+            border-radius: 2rem;
+            margin-top: 0.5rem;
+            border: 1px dashed #cde2f5;
+        }
+
+        /* 底部小裝飾 */
+        .footer-note {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #aacbe2;
+            padding: 1rem 1rem 1.3rem;
+            border-top: 1px solid #ecf5fd;
+            background: #ffffff;
+        }
+
+        @media (max-width: 520px) {
+            body {
+                padding: 1rem 0.8rem;
+            }
+            .todo-item {
+                padding: 0.7rem 0.8rem;
+                gap: 0.6rem;
+            }
+            .add-btn {
+                padding: 0.5rem 1.2rem;
+            }
+            .app-header h1 {
+                font-size: 1.6rem;
+            }
+            .input-group {
+                padding-left: 1rem;
+            }
+        }
+
+        /* 平滑滾動 */
+        button {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="todo-app">
+    <div class="app-header">
+        <h1>淺藍白・待辦清單</h1>
+        <div class="sub">輕盈記錄 · 雲感儲存</div>
+    </div>
+
+    <div class="add-task-section">
+        <div class="input-group">
+            <input type="text" class="task-input" id="newTaskInput" placeholder="寫下代辦事項... 例如「散步30分鐘」" autocomplete="off">
+            <button class="add-btn" id="addTaskBtn">＋ 新增</button>
+        </div>
+    </div>
+
+    <div class="stats-bar">
+        <span>📋 任務進度</span>
+        <span class="counter" id="taskCounter">0 項未完成</span>
+        <button class="clear-completed" id="clearCompletedBtn">✔ 清除已完成</button>
+    </div>
+
+    <div class="todo-list-container">
+        <ul class="todo-list" id="todoList">
+            <!-- 動態渲染任務列表 -->
+        </ul>
+    </div>
+    <div class="footer-note">
+        ✨ 點選 ✏️ 編輯內容 | 勾選後自動歸檔至下方
+    </div>
+</div>
+
+<script>
+    // ---------- 資料模型 ----------
+    let tasks = [];      // 每個任務物件 { id, text, completed }
+
+    // DOM 元素
+    const todoListEl = document.getElementById('todoList');
+    const newTaskInput = document.getElementById('newTaskInput');
+    const addBtn = document.getElementById('addTaskBtn');
+    const clearCompletedBtn = document.getElementById('clearCompletedBtn');
+    const taskCounterSpan = document.getElementById('taskCounter');
+
+    // 儲存至 localStorage
+    function saveToLocalStorage() {
+        try {
+            localStorage.setItem('shallowBlueTodo', JSON.stringify(tasks));
+        } catch(e) {
+            console.warn('儲存失敗', e);
+        }
+    }
+
+    // 載入本地資料，若無則加入預設兩個範例任務（淺藍白風格示範）
+    function loadFromLocalStorage() {
+        const stored = localStorage.getItem('shallowBlueTodo');
+        if (stored) {
+            try {
+                const parsed = JSON.parse(stored);
+                if (Array.isArray(parsed)) {
+                    tasks = parsed;
+                    return;
+                }
+            } catch(e) {}
+        }
+        // 預設優雅範例 (淺藍白主題展示)
+        tasks = [
+            { id: Date.now() + 1, text: '✨ 點擊右側 ✏️ 編輯任務內容', completed: false },
+            { id: Date.now() + 2, text: '✅ 完成事項可勾選，自動移至下方', completed: false },
+            { id: Date.now() + 3, text: '🗑️ 刪除或清除已完成，資料自動儲存', completed: true }
+        ];
+        saveToLocalStorage();
+    }
+
+    // 輔助：更新計數器 (未完成數量)
+    function updateCounter() {
+        const pendingCount = tasks.filter(task => !task.completed).length;
+        taskCounterSpan.innerText = `${pendingCount} 項未完成`;
+    }
+
+    // 渲染清單 (排序: 未完成在上，已完成在下)
+    function renderTodoList() {
+        if (!todoListEl) return;
+
+        // 排序：false (未完成) 在前， true (完成) 在後，保持穩定順序（原本id順序保留但依completed群組）
+        const sortedTasks = [...tasks].sort((a, b) => {
+            // 未完成的排前面 (false => 0, true => 1)
+            return a.completed === b.completed ? 0 : a.completed ? 1 : -1;
+        });
+
+        if (sortedTasks.length === 0) {
+            todoListEl.innerHTML = `<li class="empty-message">📭 清空狀態 · 新增一項代辦吧</li>`;
+            updateCounter();
+            return;
+        }
+
+        // 產生所有任務 HTML
+        const fragment = document.createDocumentFragment();
+        sortedTasks.forEach(task => {
+            const li = document.createElement('li');
+            li.className = `todo-item ${task.completed ? 'completed' : ''}`;
+            li.dataset.id = task.id;
+
+            // 內部結構
+            li.innerHTML = `
+                <input type="checkbox" class="todo-check" ${task.completed ? 'checked' : ''} data-id="${task.id}">
+                <span class="todo-text">${escapeHtml(task.text)}</span>
+                <div class="todo-actions">
+                    <button class="edit-btn" data-id="${task.id}" title="編輯任務">✏️</button>
+                    <button class="delete-btn" data-id="${task.id}" title="刪除任務">🗑️</button>
+                </div>
+            `;
+            fragment.appendChild(li);
+        });
+
+        todoListEl.innerHTML = '';
+        todoListEl.appendChild(fragment);
+        updateCounter();
+    }
+
+    // 簡單防 XSS
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+
+    // 新增任務
+    function addTask() {
+        let text = newTaskInput.value.trim();
+        if (text === "") {
+            // 簡單提示但不過度打擾，輕柔提醒
+            const tempPlaceholder = newTaskInput.placeholder;
+            newTaskInput.placeholder = "請輸入一些內容～";
+            newTaskInput.style.backgroundColor = "#fff6e5";
+            setTimeout(() => {
+                newTaskInput.placeholder = tempPlaceholder;
+                newTaskInput.style.backgroundColor = "";
+            }, 1000);
+            return;
+        }
+        // 避免重複過長但無限制
+        const newId = Date.now() + Math.floor(Math.random() * 10000);
+        tasks.push({
+            id: newId,
+            text: text,
+            completed: false,
+        });
+        saveToLocalStorage();
+        renderTodoList();
+        newTaskInput.value = "";
+        newTaskInput.focus();
+    }
+
+    // 刪除任務
+    function deleteTaskById(taskId) {
+        tasks = tasks.filter(task => task.id !== taskId);
+        saveToLocalStorage();
+        renderTodoList();
+    }
+
+    // 切換完成狀態
+    function toggleComplete(taskId, isChecked) {
+        const targetTask = tasks.find(task => task.id === taskId);
+        if (targetTask) {
+            targetTask.completed = isChecked;
+            saveToLocalStorage();
+            renderTodoList();  // 重新渲染會依照完成狀態排序（未完成會上升）
+        }
+    }
+
+    // 編輯任務 (使用 prompt 簡單優雅)
+    function editTaskById(taskId) {
+        const task = tasks.find(t => t.id === taskId);
+        if (!task) return;
+        let newText = prompt("✏️ 編輯待辦事項", task.text);
+        if (newText !== null) {
+            newText = newText.trim();
+            if (newText === "") {
+                // 若清空不修改，簡單提醒保留原樣
+                alert("內容不可為空白，未作修改");
+                return;
+            }
+            task.text = newText;
+            saveToLocalStorage();
+            renderTodoList();
+        }
+    }
+
+    // 清除所有已完成任務
+    function clearCompletedTasks() {
+        const hasCompleted = tasks.some(task => task.completed === true);
+        if (!hasCompleted) {
+            // 輕提示無已完成項目
+            const tempMsg = taskCounterSpan.innerText;
+            taskCounterSpan.innerText = "✨ 無已完成項目";
+            setTimeout(() => {
+                updateCounter();
+            }, 800);
+            return;
+        }
+        tasks = tasks.filter(task => !task.completed);
+        saveToLocalStorage();
+        renderTodoList();
+    }
+
+    // ---------- 事件委託 (高效處理所有動態按鈕與checkbox) ----------
+    function setupDelegation() {
+        // 整個 todo-list 容器委託 (checkbox 改變 & 編輯刪除按鈕)
+        todoListEl.addEventListener('change', (e) => {
+            const checkbox = e.target.closest('.todo-check');
+            if (checkbox && checkbox.dataset.id) {
+                const taskId = Number(checkbox.dataset.id);
+                const isChecked = checkbox.checked;
+                toggleComplete(taskId, isChecked);
+                e.stopPropagation();
+            }
+        });
+
+        todoListEl.addEventListener('click', (e) => {
+            // 編輯按鈕
+            const editBtn = e.target.closest('.edit-btn');
+            if (editBtn && editBtn.dataset.id) {
+                const taskId = Number(editBtn.dataset.id);
+                editTaskById(taskId);
+                e.preventDefault();
+                return;
+            }
+            // 刪除按鈕
+            const deleteBtn = e.target.closest('.delete-btn');
+            if (deleteBtn && deleteBtn.dataset.id) {
+                const taskId = Number(deleteBtn.dataset.id);
+                deleteTaskById(taskId);
+                e.preventDefault();
+                return;
+            }
+        });
+    }
+
+    // 鍵盤支援: 在輸入框按 Enter 新增任務
+    function bindEnterKey() {
+        if (newTaskInput) {
+            newTaskInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addTask();
+                }
+            });
+        }
+    }
+
+    // 初始化及額外功能（清除已完成按鈕監聽）
+    function initApp() {
+        loadFromLocalStorage();
+        renderTodoList();
+        setupDelegation();
+        bindEnterKey();
+        // 清除已完成按鈕監聽
+        if (clearCompletedBtn) {
+            clearCompletedBtn.addEventListener('click', () => {
+                clearCompletedTasks();
+            });
+        }
+        // 新增按鈕監聽
+        if (addBtn) {
+            addBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                addTask();
+            });
+        }
+        // 簡單的即時儲存監聽 (視窗關閉前無需額外，每次操作已儲存)
+    }
+
+    // 啟動應用
+    initApp();
+</script>
+</body>
+</html>
